@@ -418,6 +418,8 @@ function ndigits0znb(n::Signed, b::Int)
 end
 
 function ndigits0z(n::Unsigned, b::Int)
+    # precondition: b > 1
+    x == 0 && return 0
     b < 0   && return ndigits0znb(signed(n), b)
     b == 2  && return sizeof(n)<<3 - leading_zeros(n)
     b == 8  && return (sizeof(n)<<3 - leading_zeros(n) + 2) ÷ 3
