@@ -482,11 +482,11 @@ static Value *runtime_apply_type(jl_value_t *ty, jl_unionall_t *unionall, jl_cod
 {
     // box if concrete type was not statically known
     Value *args[3];
-    args[0] = literal_pointer_val(ty);
-    args[1] = literal_pointer_val((jl_value_t*)ctx->linfo->def->sig);
-    args[2] = builder.CreateInBoundsGEP(
-            LLVM37_param(T_pjlvalue)
-            emit_bitcast(ctx->spvals_ptr, T_ppjlvalue),
+    args[0] = literal_pointer_val(ctx, ty);
+    args[1] = literal_pointer_val(ctx, (jl_value_t*)ctx.linfo->def.method->sig);
+    args[2] = ctx.builder.CreateInBoundsGEP(
+            T_prjlvalue,
+            ctx.spvals_ptr,
             ConstantInt::get(T_size, sizeof(jl_svec_t) / sizeof(jl_value_t*)));
     return builder.CreateCall(prepare_call(jlapplytype_func), makeArrayRef(args));
 }
