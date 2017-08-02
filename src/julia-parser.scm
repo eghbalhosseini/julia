@@ -610,17 +610,15 @@
 (define (line-number-node s)
   `(line ,(input-port-line (ts:port s)) ,current-filename))
 
-(define (eventually-call ex)
+(define (eventually-call? ex)
   (and (pair? ex)
        (or (eq? (car ex) 'call)
            (and (or (eq? (car ex) 'where) (eq? (car ex) '|::|))
-                (eventually-call (cadr ex))))))
+                (eventually-call? (cadr ex))))))
 
 ;; insert line/file for short-form function defs, otherwise leave alone
 (define (short-form-function-loc ex lno)
-  (if (and (pair? ex)
-           (eq? (car ex) '=)
-           (eventually-call (cadr ex)))
+  (if (eventually-call? (cadr ex))
       `(= ,(cadr ex) (block (line ,lno ,current-filename) ,(caddr ex)))
       ex))
 
